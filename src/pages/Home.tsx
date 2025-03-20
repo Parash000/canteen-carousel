@@ -1,118 +1,58 @@
-
 import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import Navigation from "@/components/Navigation";
 import FoodCarousel from "@/components/FoodCarousel";
 import FadeInSection from "@/components/FadeInSection";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Coffee, Pizza, UtensilsCrossed, Clock, TrendingUp } from "lucide-react";
-
-// Sample food items for each category
-const foodCategories = {
-  breakfast: [
-    {
-      id: "b1",
-      name: "Avocado Toast",
-      image: "https://images.unsplash.com/photo-1588137378633-dea1336ce1e2?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-      price: "$8.99",
-      description: "Freshly baked sourdough topped with smashed avocado",
-    },
-    {
-      id: "b2",
-      name: "Breakfast Bowl",
-      image: "https://images.unsplash.com/photo-1494390248081-4e521a5940db?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-      price: "$9.99",
-      description: "Greek yogurt, granola, and fresh seasonal berries",
-    },
-    {
-      id: "b3",
-      name: "Pancake Stack",
-      image: "https://images.unsplash.com/photo-1554520735-0a6b8b6ce8b7?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-      price: "$7.99",
-      description: "Fluffy pancakes with maple syrup and mixed berries",
-    },
-    {
-      id: "b4",
-      name: "Egg Sandwich",
-      image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-      price: "$6.99",
-      description: "Fried egg, cheddar cheese, and bacon on a brioche bun",
-    },
-  ],
-  lunch: [
-    {
-      id: "l1",
-      name: "Quinoa Bowl",
-      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-      price: "$10.99",
-      description: "Protein-packed quinoa with roasted vegetables",
-    },
-    {
-      id: "l2",
-      name: "Chicken Wrap",
-      image: "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-      price: "$9.99",
-      description: "Grilled chicken, avocado, and veggies in a tortilla wrap",
-    },
-    {
-      id: "l3",
-      name: "Poke Bowl",
-      image: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-      price: "$12.99",
-      description: "Fresh ahi tuna, cucumber, avocado on rice",
-    },
-    {
-      id: "l4",
-      name: "Veggie Sandwich",
-      image: "https://images.unsplash.com/photo-1539252554939-0bf58f3e4e13?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-      price: "$8.99",
-      description: "Roasted vegetables and hummus on multigrain bread",
-    },
-  ],
-  dinner: [
-    {
-      id: "d1",
-      name: "Margherita Pizza",
-      image: "https://images.unsplash.com/photo-1594007654729-407eedc4be65?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-      price: "$12.99",
-      description: "Classic pizza with tomato sauce, mozzarella, and basil",
-    },
-    {
-      id: "d2",
-      name: "Grilled Salmon",
-      image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-      price: "$15.99",
-      description: "Perfectly grilled salmon with lemon butter sauce",
-    },
-    {
-      id: "d3",
-      name: "Pasta Primavera",
-      image: "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-      price: "$11.99",
-      description: "Pasta with seasonal vegetables in a light cream sauce",
-    },
-    {
-      id: "d4",
-      name: "Steak Plate",
-      image: "https://images.unsplash.com/photo-1504973960431-1c467e159aa4?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
-      price: "$18.99",
-      description: "Grilled steak with roasted potatoes and vegetables",
-    },
-  ],
-};
+import { menuApi } from "@/services/api";
+import { MenuItem } from "@/types/menu";
+import { toast } from "sonner";
 
 const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   
-  useEffect(() => {
-    // Simulate loading data
-    const timer = setTimeout(() => {
+  // Fetch breakfast menu items
+  const breakfastQuery = useQuery({
+    queryKey: ['menu', 'breakfast'],
+    queryFn: () => menuApi.getByCategory('breakfast'),
+    onSuccess: () => setIsLoading(false),
+    onError: (error) => {
+      console.error('Error fetching breakfast menu:', error);
+      toast.error('Failed to load breakfast menu');
       setIsLoading(false);
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }, []);
+    }
+  });
+  
+  // Fetch lunch menu items
+  const lunchQuery = useQuery({
+    queryKey: ['menu', 'lunch'],
+    queryFn: () => menuApi.getByCategory('lunch'),
+    onError: (error) => {
+      console.error('Error fetching lunch menu:', error);
+    }
+  });
+  
+  // Fetch dinner menu items
+  const dinnerQuery = useQuery({
+    queryKey: ['menu', 'dinner'],
+    queryFn: () => menuApi.getByCategory('dinner'),
+    onError: (error) => {
+      console.error('Error fetching dinner menu:', error);
+    }
+  });
+  
+  // Use the local food categories as fallback if API fails
+  const foodCategories = {
+    breakfast: breakfastQuery.data || [],
+    lunch: lunchQuery.data || [],
+    dinner: dinnerQuery.data || [],
+  };
+  
+  // If all queries are loading, show the fallback categories
+  const isAllLoading = breakfastQuery.isLoading && lunchQuery.isLoading && dinnerQuery.isLoading;
   
   return (
     <div className="min-h-screen bg-canteen flex flex-col">
@@ -194,31 +134,47 @@ const Home = () => {
               
               {Object.entries(foodCategories).map(([category, items]) => (
                 <TabsContent key={category} value={category}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {items.map((item, index) => (
-                      <FadeInSection key={item.id} delay={300 + index * 100} direction="up">
-                        <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-canteen-100">
-                          <div className="aspect-w-16 aspect-h-9 relative overflow-hidden">
-                            <img
-                              src={item.image}
-                              alt={item.name}
-                              className="w-full h-48 object-cover transition-transform hover:scale-105 duration-500"
-                            />
-                          </div>
+                  {isAllLoading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                      {Array(4).fill(0).map((_, index) => (
+                        <div key={index} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-canteen-100 animate-pulse">
+                          <div className="h-48 bg-canteen-200" />
                           <div className="p-4">
-                            <div className="flex justify-between items-start mb-2">
-                              <h3 className="font-semibold text-canteen-800">{item.name}</h3>
-                              <span className="font-bold text-canteen-accent">{item.price}</span>
-                            </div>
-                            <p className="text-canteen-600 text-sm mb-4 line-clamp-2">{item.description}</p>
-                            <Button size="sm" className="w-full bg-canteen-accent hover:bg-canteen-accent-dark text-white">
-                              Add to Order
-                            </Button>
+                            <div className="h-4 bg-canteen-200 rounded w-3/4 mb-2" />
+                            <div className="h-4 bg-canteen-200 rounded w-1/4 mb-2" />
+                            <div className="h-3 bg-canteen-200 rounded w-full mb-4" />
+                            <div className="h-8 bg-canteen-200 rounded w-full" />
                           </div>
                         </div>
-                      </FadeInSection>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                      {Array.isArray(items) && items.map((item: MenuItem, index: number) => (
+                        <FadeInSection key={item._id || index} delay={300 + index * 100} direction="up">
+                          <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-canteen-100">
+                            <div className="aspect-w-16 aspect-h-9 relative overflow-hidden">
+                              <img
+                                src={item.image}
+                                alt={item.name}
+                                className="w-full h-48 object-cover transition-transform hover:scale-105 duration-500"
+                              />
+                            </div>
+                            <div className="p-4">
+                              <div className="flex justify-between items-start mb-2">
+                                <h3 className="font-semibold text-canteen-800">{item.name}</h3>
+                                <span className="font-bold text-canteen-accent">{item.price}</span>
+                              </div>
+                              <p className="text-canteen-600 text-sm mb-4 line-clamp-2">{item.description}</p>
+                              <Button size="sm" className="w-full bg-canteen-accent hover:bg-canteen-accent-dark text-white">
+                                Add to Order
+                              </Button>
+                            </div>
+                          </div>
+                        </FadeInSection>
+                      ))}
+                    </div>
+                  )}
                 </TabsContent>
               ))}
             </Tabs>
