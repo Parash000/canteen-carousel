@@ -1,3 +1,6 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +16,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 210 100% 50%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -30,24 +33,17 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --ring: 210 100% 50%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -61,8 +57,8 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 210 100% 50%;
+    --primary-foreground: 210 40% 98%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -96,6 +92,83 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-canteen text-foreground antialiased;
+    -webkit-font-smoothing: antialiased;
   }
+
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-lg border border-white/10 shadow-sm;
+  }
+
+  .glass-panel {
+    @apply bg-white/90 backdrop-blur-md shadow-sm border border-gray-100;
+  }
+
+  .smooth-transition {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  .page-transition {
+    @apply transition-all duration-500 ease-out;
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    .container {
+      @apply px-4;
+    }
+  }
+}
+
+/* Carousel fade animation */
+.carousel-fade {
+  .carousel-item {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+  }
+  
+  .carousel-item.active {
+    opacity: 1;
+  }
+}
+
+/* Button hover effect */
+.btn-hover-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-hover-effect:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-out;
+}
+
+.btn-hover-effect:hover:after {
+  transform: translateX(0);
+}
+
+/* Page transitions */
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 300ms;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
 }
