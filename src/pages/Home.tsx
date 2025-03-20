@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Navigation from "@/components/Navigation";
@@ -18,11 +19,13 @@ const Home = () => {
   const breakfastQuery = useQuery({
     queryKey: ['menu', 'breakfast'],
     queryFn: () => menuApi.getByCategory('breakfast'),
-    onSuccess: () => setIsLoading(false),
-    onError: (error) => {
-      console.error('Error fetching breakfast menu:', error);
-      toast.error('Failed to load breakfast menu');
-      setIsLoading(false);
+    onSettled: () => setIsLoading(false),
+    meta: {
+      onError: (error: Error) => {
+        console.error('Error fetching breakfast menu:', error);
+        toast.error('Failed to load breakfast menu');
+        setIsLoading(false);
+      }
     }
   });
   
@@ -30,8 +33,10 @@ const Home = () => {
   const lunchQuery = useQuery({
     queryKey: ['menu', 'lunch'],
     queryFn: () => menuApi.getByCategory('lunch'),
-    onError: (error) => {
-      console.error('Error fetching lunch menu:', error);
+    meta: {
+      onError: (error: Error) => {
+        console.error('Error fetching lunch menu:', error);
+      }
     }
   });
   
@@ -39,8 +44,10 @@ const Home = () => {
   const dinnerQuery = useQuery({
     queryKey: ['menu', 'dinner'],
     queryFn: () => menuApi.getByCategory('dinner'),
-    onError: (error) => {
-      console.error('Error fetching dinner menu:', error);
+    meta: {
+      onError: (error: Error) => {
+        console.error('Error fetching dinner menu:', error);
+      }
     }
   });
   
