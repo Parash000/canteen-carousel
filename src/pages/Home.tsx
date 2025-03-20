@@ -19,13 +19,11 @@ const Home = () => {
   const breakfastQuery = useQuery({
     queryKey: ['menu', 'breakfast'],
     queryFn: () => menuApi.getByCategory('breakfast'),
-    onSettled: () => setIsLoading(false),
-    meta: {
-      onError: (error: Error) => {
-        console.error('Error fetching breakfast menu:', error);
-        toast.error('Failed to load breakfast menu');
-        setIsLoading(false);
-      }
+    onSuccess: () => setIsLoading(false),
+    onError: (error: Error) => {
+      console.error('Error fetching breakfast menu:', error);
+      toast.error('Failed to load breakfast menu');
+      setIsLoading(false);
     }
   });
   
@@ -33,10 +31,8 @@ const Home = () => {
   const lunchQuery = useQuery({
     queryKey: ['menu', 'lunch'],
     queryFn: () => menuApi.getByCategory('lunch'),
-    meta: {
-      onError: (error: Error) => {
-        console.error('Error fetching lunch menu:', error);
-      }
+    onError: (error: Error) => {
+      console.error('Error fetching lunch menu:', error);
     }
   });
   
@@ -44,10 +40,8 @@ const Home = () => {
   const dinnerQuery = useQuery({
     queryKey: ['menu', 'dinner'],
     queryFn: () => menuApi.getByCategory('dinner'),
-    meta: {
-      onError: (error: Error) => {
-        console.error('Error fetching dinner menu:', error);
-      }
+    onError: (error: Error) => {
+      console.error('Error fetching dinner menu:', error);
     }
   });
   
